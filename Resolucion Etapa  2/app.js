@@ -1,6 +1,6 @@
 // Clase Estudiante
 class Estudiante {
-  constructor(id,nombre, edad, nota) {
+  constructor(id, nombre, edad, nota) {
     this.id = id;
     this.nombre = nombre;
     this.edad = edad;
@@ -72,36 +72,69 @@ const tituloFormCurso = document.getElementById('titulo-form-curso');
 const tituloFormEstudiante = document.getElementById('titulo-form-estudiante');
 
 // Validar el formulario de curso
-function validarCurso(nombreCurso, profesorCurso) {
-  let errores = [];
 
-  if (!nombreCurso.trim()) {
-    errores.push('El nombre del curso no puede estar vacío.');
+function ValidarCursos() {
+  const nombreCurso = document.getElementById('nombre-curso').value;
+  const profesorCurso = document.getElementById('profesor-curso').value;
+  
+  var bandera = true;
+  var bandera1 = true;
+
+  if (nombreCurso == '') {
+    alert('El nombre del curso no puede estar vacío.');
+    bandera = false
   }
 
-  if (!profesorCurso.trim()) {
-    errores.push('El nombre del profesor no puede estar vacío.');
+  if (profesorCurso == '') {
+    alert('El nombre del profesor no puede estar vacío.');
+    bandera1 = false
   }
 
-  return errores;
+  console.log(bandera, bandera1)
+
+
+  if (bandera == true && bandera1 == true) {
+
+    const idCurso = document.getElementById('id-curso').value
+    if (idCurso) {
+      // Editar curso existente
+      const curso = cursos.find(c => c.id === parseInt(idCurso));
+      if (curso) {
+        curso.editar(nombreCurso, profesorCurso);
+        resetFormularioCurso();
+      }
+    } else {
+      // Crear un nuevo curso
+      console.log("estuve aqui")
+      const nuevoCurso = new Curso(idCursoActual++, nombreCurso, profesorCurso);
+      cursos.push(nuevoCurso);
+    }
+    ;
+    // Limpiar formulario
+    formCurso.reset();
+
+    // Actualizar la lista de cursos en el select
+    actualizarCursosSelect();
+
+    // Mostrar los cursos
+    mostrarCursos();
+  }
+
 }
 // Validar el formulario de estudiante
 function validarEstudiante(nombreEstudiante, edadEstudiante, notaEstudiante) {
-  let errores = [];
 
   if (!nombreEstudiante.trim()) {
-    errores.push('El nombre del estudiante no puede estar vacío.');
+    alert('El nombre del estudiante no puede estar vacío.');
   }
 
-  if (isNaN(edadEstudiante) || edadEstudiante <= 0) {
-    errores.push('La edad debe ser un número positivo.');
+  if (edadEstudiante <= 0) {
+    alert("la edad debe ser un numero positivo")
   }
 
-  if (isNaN(notaEstudiante) || notaEstudiante < 0 || notaEstudiante > 10) {
-    errores.push('La nota debe estar entre 0 y 10.');
+  if (notaEstudiante < 0 || notaEstudiante > 10) {
+    alert('La nota debe estar entre 0 y 10.');
   }
-
-  return errores;
 }
 
 // Mostrar los errores debajo del formulario
@@ -119,46 +152,7 @@ function ocultarErrores(idElementoError) {
 }
 
 // Evento para agregar un curso o editar
-formCurso.addEventListener('submit', (e) => {
-  e.preventDefault();
 
-  const nombreCurso = document.getElementById('nombre-curso').value;
-  const profesorCurso = document.getElementById('profesor-curso').value;
-
-  // Realizar validaciones
-  const errores = validarCurso(nombreCurso, profesorCurso);
-
-  if (errores.length > 0) {
-    mostrarErrores(errores, 'error-mensaje-curso');
-    return;
-  }
-
-  // Limpiar errores y proceder
-  ocultarErrores('error-mensaje-curso');
-
-  const idCurso = document.getElementById('id-curso').value
-  if (idCurso) {
-    // Editar curso existente
-    const curso = cursos.find(c => c.id === parseInt(idCurso));
-    if (curso) {
-      curso.editar(nombreCurso, profesorCurso);
-      resetFormularioCurso();
-    }
-  } else {
-    // Crear un nuevo curso
-    const nuevoCurso = new Curso(idCursoActual++, nombreCurso, profesorCurso);
-    cursos.push(nuevoCurso);
-  }
-  ;
-  // Limpiar formulario
-  formCurso.reset();
-
-  // Actualizar la lista de cursos en el select
-  actualizarCursosSelect();
-
-  // Mostrar los cursos
-  mostrarCursos();
-});
 
 // Evento para cancelar edición de curso
 botonCancelarCurso.addEventListener('click', () => {
@@ -175,17 +169,6 @@ formEstudiante.addEventListener('submit', (e) => {
   const notaEstudiante = parseFloat(document.getElementById('nota-estudiante').value);
   const cursoIndex = cursoEstudianteSelect.value;
 
-  // Realizar validaciones
-  const errores = validarEstudiante(nombreEstudiante, edadEstudiante, notaEstudiante);
-
-  if (errores.length > 0) {
-    mostrarErrores(errores, 'error-mensaje-estudiante');
-    return;
-  }
-
-  // Limpiar errores y proceder
-  ocultarErrores('error-mensaje-estudiante');
-  
   const idEstudiante = document.getElementById('id-estudiante').value;
 
   if (idEstudiante) {
