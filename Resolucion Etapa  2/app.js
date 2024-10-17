@@ -92,7 +92,6 @@ function ValidarCursos() {
 
   console.log(bandera, bandera1)
 
-
   if (bandera == true && bandera1 == true) {
 
     const idCurso = document.getElementById('id-curso').value
@@ -122,18 +121,61 @@ function ValidarCursos() {
 
 }
 // Validar el formulario de estudiante
-function validarEstudiante(nombreEstudiante, edadEstudiante, notaEstudiante) {
+function validarEstudiante() {
 
-  if (!nombreEstudiante.trim()) {
+  const nombreEstudiante = document.getElementById('nombre-estudiante').value;
+  const edadEstudiante = parseInt(document.getElementById('edad-estudiante').value);
+  const notaEstudiante = parseFloat(document.getElementById('nota-estudiante').value);
+  const cursoIndex = cursoEstudianteSelect.value;
+
+  var bandera = true;
+  var bandera1 = true;
+  var bandera2 = true;
+
+  if (nombreEstudiante == '') {
     alert('El nombre del estudiante no puede estar vacío.');
+    bandera = false
   }
 
   if (edadEstudiante <= 0) {
     alert("la edad debe ser un numero positivo")
+    bandera1 = false
   }
 
   if (notaEstudiante < 0 || notaEstudiante > 10) {
     alert('La nota debe estar entre 0 y 10.');
+    bandera2 = false
+  }
+
+  console.log(bandera, bandera1, bandera2)
+
+  const idEstudiante = document.getElementById('id-estudiante').value;
+
+  if (bandera == true && bandera1 == true && bandera2 == true) {
+
+    if (idEstudiante) {
+      // Editar estudiante existente
+      const curso = cursos.find(c => c.id === parseInt(document.getElementById('id-curso-estudiante').value));
+      if (curso) {
+        const estudiante = curso.estudiantes.find(est => est.id === parseInt(idEstudiante));
+        if (estudiante) {
+          estudiante.nombre = nombreEstudiante;
+          estudiante.edad = edadEstudiante;
+          estudiante.nota = notaEstudiante;
+          resetFormularioEstudiante();
+        }
+      }
+    } else {
+      // Crear un nuevo estudiante
+      const nuevoEstudiante = new Estudiante(idEstudianteActual++, nombreEstudiante, edadEstudiante, notaEstudiante);
+      cursos[cursoIndex].agregarEstudiante(nuevoEstudiante);
+    }
+    
+    // Limpiar formulario
+    formEstudiante.reset();
+    
+    // Mostrar los cursos actualizados
+    mostrarCursos();
   }
 }
 
@@ -159,42 +201,10 @@ botonCancelarCurso.addEventListener('click', () => {
   resetFormularioCurso();
 });
 
-// Evento para agregar un estudiante o editar
-formEstudiante.addEventListener('submit', (e) => {
-  e.preventDefault();
+// // Evento para agregar un estudiante o editar
+// formEstudiante.addEventListener('submit', (e) => {
+//   e.preventDefault();
 
-  // Capturar datos del formulario
-  const nombreEstudiante = document.getElementById('nombre-estudiante').value;
-  const edadEstudiante = parseInt(document.getElementById('edad-estudiante').value);
-  const notaEstudiante = parseFloat(document.getElementById('nota-estudiante').value);
-  const cursoIndex = cursoEstudianteSelect.value;
-
-  const idEstudiante = document.getElementById('id-estudiante').value;
-
-  if (idEstudiante) {
-    // Editar estudiante existente
-    const curso = cursos.find(c => c.id === parseInt(document.getElementById('id-curso-estudiante').value));
-    if (curso) {
-      const estudiante = curso.estudiantes.find(est => est.id === parseInt(idEstudiante));
-      if (estudiante) {
-        estudiante.nombre = nombreEstudiante;
-        estudiante.edad = edadEstudiante;
-        estudiante.nota = notaEstudiante;
-        resetFormularioEstudiante();
-      }
-    }
-  } else {
-    // Crear un nuevo estudiante
-    const nuevoEstudiante = new Estudiante(idEstudianteActual++, nombreEstudiante, edadEstudiante, notaEstudiante);
-    cursos[cursoIndex].agregarEstudiante(nuevoEstudiante);
-  }
-
-  // Limpiar formulario
-  formEstudiante.reset();
-
-  // Mostrar los cursos actualizados
-  mostrarCursos();
-});
 
 // Evento para cancelar edición de estudiante
 botonCancelarEstudiante.addEventListener('click', () => {
