@@ -18,10 +18,10 @@
     <form id="form-curso">
       <input type="hidden" id="id-curso">
       <label for="nombre-curso">Nombre del curso:</label>
-      <input type="text" id="nombre-curso" >
+      <input type="text" id="nombre-curso">
 
       <label for="profesor-curso">Profesor a cargo:</label>
-      <input type="text" id="profesor-curso" >
+      <input type="text" id="profesor-curso">
 
       <button type="button" id="" onclick="ValidarCursos()">Agregar Curso</button>
       <button type="button" id="cancelar-curso" style="display: none;">Cancelar</button>
@@ -52,6 +52,14 @@
       <button type="button" id="cancelar-estudiante" style="display: none;">Cancelar</button>
     </form>
 
+    <!-- Filtro de búsqueda -->
+    <h3>Buscar Estudiantes</h3>
+    <input type="text" id="busqueda-estudiante" placeholder="Buscar por nombre">
+
+    <!-- Botones para ordenar -->
+    <h3>Ordenar Estudiantes</h3>
+    <button onclick="ordenarPorNota()">Ordenar por Nota</button>
+    <button onclick="ordenarPorEdad()">Ordenar por Edad</button>
 
     <!-- Listado de cursos y estudiantes -->
     <h2>Listado de Cursos y Estudiantes</h2>
@@ -60,7 +68,6 @@
       <!-- Cursos y estudiantes se mostrarán aquí -->
     </div>
   </div>
-
   <!-- Mensajes de error -->
   <div id="error-mensaje-curso" class="error-mensaje"></div>
   <div id="error-mensaje-estudiante" class="error-mensaje"></div>

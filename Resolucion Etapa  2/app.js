@@ -72,7 +72,6 @@ const tituloFormCurso = document.getElementById('titulo-form-curso');
 const tituloFormEstudiante = document.getElementById('titulo-form-estudiante');
 
 // Validar el formulario de curso
-
 function ValidarCursos() {
   const nombreCurso = document.getElementById('nombre-curso').value;
   const profesorCurso = document.getElementById('profesor-curso').value;
@@ -193,24 +192,15 @@ function ocultarErrores(idElementoError) {
   divErrores.style.display = 'none';
 }
 
-// Evento para agregar un curso o editar
-
-
 // Evento para cancelar edición de curso
 botonCancelarCurso.addEventListener('click', () => {
   resetFormularioCurso();
 });
 
-// // Evento para agregar un estudiante o editar
-// formEstudiante.addEventListener('submit', (e) => {
-//   e.preventDefault();
-
-
 // Evento para cancelar edición de estudiante
 botonCancelarEstudiante.addEventListener('click', () => {
   resetFormularioEstudiante();
 });
-
 
 // Función para actualizar el select de cursos
 function actualizarCursosSelect() {
@@ -261,7 +251,7 @@ function mostrarCursos() {
     btn.addEventListener('click', eliminarEstudiante);
   });
 }
-// Funciones para editar y eliminar cursos
+// Funciones para editar cursos
 function editarCurso(e) {
   const cursoDiv = e.target.parentElement;
   const idCurso = parseInt(cursoDiv.getAttribute('data-id'));
@@ -278,7 +268,7 @@ function editarCurso(e) {
     botonCancelarCurso.style.display = 'inline-block';
   }
 }
-
+// Funciones para eliminar cursos
 function eliminarCurso(e) {
   if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
     const cursoDiv = e.target.parentElement;
@@ -289,7 +279,7 @@ function eliminarCurso(e) {
   }
 }
 
-// Funciones para editar y eliminar estudiantes
+// Funciones para editar estudiantes
 function editarEstudiante(e) {
   const estudianteDiv = e.target.parentElement;
   const idEstudiante = parseInt(estudianteDiv.getAttribute('data-id'));
@@ -315,6 +305,7 @@ function editarEstudiante(e) {
   }
 }
 
+// Funciones para eliminar estudiantes
 function eliminarEstudiante(e) {
   if (confirm('¿Estás seguro de que deseas eliminar este estudiante?')) {
     const estudianteDiv = e.target.parentElement;
@@ -327,6 +318,57 @@ function eliminarEstudiante(e) {
       mostrarCursos();
     }
   }
+}
+
+// Función para buscar estudiantes por nombre
+function buscarEstudiante() {
+  const busqueda = document.getElementById('busqueda-estudiante').value.toLowerCase();
+  cursos.forEach(curso => {
+    curso.estudiantes = curso.estudiantes.filter(est => est.nombre.toLowerCase().includes(busqueda));
+  });
+  mostrarCursos(); // Actualizamos la lista con los resultados de la búsqueda
+}
+
+// Función para ordenar estudiantes por nota
+function ordenarPorNota() {
+  cursos.forEach(curso => {
+    curso.estudiantes.sort((a, b) => b.nota - a.nota); // Orden descendente por nota
+  });
+  mostrarCursos(); // Actualizamos la lista con el nuevo orden
+}
+
+// Función para ordenar estudiantes por edad
+function ordenarPorEdad() {
+  cursos.forEach(curso => {
+    curso.estudiantes.sort((a, b) => a.edad - b.edad); // Orden ascendente por edad
+  });
+  mostrarCursos(); // Actualizamos la lista con el nuevo orden
+}
+
+// Añadir evento de búsqueda
+document.getElementById('busqueda-estudiante').addEventListener('input', buscarEstudiante);
+
+// Actualizar los cursos y estudiantes después de aplicar filtros y orden
+function mostrarCursos() {
+  listaCursos.innerHTML = '';
+  cursos.forEach((curso) => {
+    let cursoDiv = document.createElement('div');
+    cursoDiv.classList.add('curso');
+    cursoDiv.setAttribute('data-id', curso.id);
+
+    cursoDiv.innerHTML = `
+      <h3>Curso: ${curso.nombre} (Profesor: ${curso.profesor})</h3>
+      <button class="editar-curso">Editar Curso</button>
+      <button class="eliminar-curso">Eliminar Curso</button>
+      <p><strong>Promedio:</strong> ${curso.obtenerPromedio()}</p>
+      <div class="estudiantes">
+        <strong>Estudiantes:</strong><br>
+        ${curso.listarEstudiantes()}
+      </div>
+    `;
+
+    listaCursos.appendChild(cursoDiv);
+  });
 }
 
 // Funciones para resetear los formularios

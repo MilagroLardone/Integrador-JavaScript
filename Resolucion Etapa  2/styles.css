@@ -115,3 +115,7 @@ button.eliminar-estudiante:hover {
   border: 2px solid red;
   /* Estilo para inputs con errores */
 }
+
+button {
+  margin: 5px 0;
+}
