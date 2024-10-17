@@ -1,6 +1,7 @@
 // Clase Estudiante
 class Estudiante {
-  constructor(nombre, edad, nota) {
+  constructor(id,nombre, edad, nota) {
+    this.id = id;
     this.nombre = nombre;
     this.edad = edad;
     this.nota = nota;
