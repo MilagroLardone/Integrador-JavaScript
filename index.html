@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Cursos</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 
 <body>
@@ -23,7 +23,7 @@
       <label for="profesor-curso">Profesor a cargo:</label>
       <input type="text" id="profesor-curso">
 
-      <button type="button" id="" onclick="ValidarCursos()">Agregar Curso</button>
+      <button type="button" id="" onclick="ValidarCurso()">Agregar Curso</button>
       <button type="button" id="cancelar-curso" style="display: none;">Cancelar</button>
     </form>
 
@@ -48,7 +48,7 @@
         <!-- Opciones de curso dinámicamente -->
       </select>
 
-      <button type="submit" id="boton-estudiante" onclick="validarEstudiante()">Agregar Estudiante</button>
+      <button type="submit" id="boton-estudiante" onclick="agregarEstudiante()">Agregar Estudiante</button>
       <button type="button" id="cancelar-estudiante" style="display: none;">Cancelar</button>
     </form>
 
@@ -71,7 +71,7 @@
   <div id="error-mensaje-curso" class="error-mensaje"></div>
   <div id="error-mensaje-estudiante" class="error-mensaje"></div>
 
-  <script src="app.js"></script>
+  <script src="./js/app.js"></script>
 </body>
 
 </html>
