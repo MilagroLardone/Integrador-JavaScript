@@ -248,11 +248,7 @@ function mostrarCursosDesdeLocalStorage() {
         : 'No hay estudiantes inscritos';
 
       // Calcular el promedio del curso
-      const promedioCurso = obtenerPromedio(cursoGuardado.estudiantes);
-      if (cursoGuardado.estudiantes.length > 0) {
-        sumaPromedios += promedioCurso;
-        totalCursos++; // Contar cursos que tienen estudiantes
-      }
+      
 
       // Añadir el curso y su lista de estudiantes al cuerpo
       cuerpo.innerHTML += ` 
@@ -260,7 +256,7 @@ function mostrarCursosDesdeLocalStorage() {
         <h3>Curso: ${cursoGuardado.nombre} (Profesor: ${cursoGuardado.profesor})</h3>
         <button class="editar-curso" onClick="editarCurso(${cursoGuardado.id})">Editar Curso</button>
         <button class="eliminar-curso" onClick="eliminarCurso(${cursoGuardado.id})">Eliminar Curso</button>
-        <p><strong>Promedio del Curso:</strong> ${promedioCurso.toFixed(2)}</p>
+        <p><strong>Promedio del Curso:</strong> ${obtenerPromedio(cursoGuardado.estudiantes).toFixed(2)}</p>
         <div class="estudiantes"> 
           <strong>Estudiantes:</strong><br>
           ${listaEstudiantes}
