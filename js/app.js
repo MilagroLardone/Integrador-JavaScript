@@ -67,9 +67,10 @@ const listaCursos = document.getElementById('lista-cursos');
 
 
 // Botones de cancelar
+const botonGuardarCambios = document.getElementById('guardar-cambios');
 const botonCancelarCurso = document.getElementById('cancelar-curso');
 const botonCancelarEstudiante = document.getElementById('cancelar-estudiante');
-
+const botonGuardarCambiosEstudiante = document.getElementById('guardar-estudiante');
 // Evento para cancelar edición de curso
 botonCancelarCurso.addEventListener('click', () => {
   resetFormularioCurso();
@@ -99,7 +100,7 @@ const cuerpo = document.querySelector("#lista-cursos");
 
 
 // Validar el formulario de curso
-function ValidarCurso() {
+function AgregarCurso() {
   const nombreCurso = document.getElementById('nombre-curso').value;
   const profesorCurso = document.getElementById('profesor-curso').value;
 
@@ -251,26 +252,26 @@ function mostrarCursosDesdeLocalStorage() {
       ? cursoGuardado.estudiantes.map(est => `
         <div class="estudiante" data-id="${est.id}">
            ${est.nombre} (${est.edad} años) - Nota: ${est.nota}
-          <button class="editar-estudiante">Editar</button>
+          <button class="editar-estudiante" onClick="editarEstudiante(${cursoGuardado.id}, ${est.id})">Editar</button>
           <button class="eliminar-estudiante" onClick="EliminarEstudiantes(${cursoGuardado.id}, ${est.id})">Eliminar</button>
         </div>
         `).join('') 
         : 'No hay estudiantes inscritos';
 
       // Añadir el curso y su lista de estudiantes al cuerpo
-      cuerpo.innerHTML +=  ` <h3>Curso: ${cursoGuardado.nombre} (Profesor: ${cursoGuardado.profesor})</h3>
-      <button class="editar-curso" onClick="editarCurso()">Editar Curso</button>
-      <button class="eliminar-curso" onClick="eliminarCurso()">Eliminar Curso</button>
-      <p><strong>Promedio:</strong> cursoGuardado.obtenerPromedio()</p>
-      <div class="estudiantes">
-      <strong>Estudiantes:</strong><br>
-      ${listaEstudiantes}
-      </div>
+      cuerpo.innerHTML +=  ` 
+      <div id="curso-${cursoGuardado.id}">
+        <h3>Curso: ${cursoGuardado.nombre} (Profesor: ${cursoGuardado.profesor})</h3>
+        <button class="editar-curso" onClick="editarCurso(${cursoGuardado.id})">Editar Curso</button>
+        <button class="eliminar-curso" onClick="eliminarCurso(${cursoGuardado.id})">Eliminar Curso</button>
+        <p><strong>Promedio:</strong> cursoGuardado.obtenerPromedio()</p>
+        <div class="estudiantes">
+          <strong>Estudiantes:</strong><br>
+          ${listaEstudiantes}
+        </div>
+      <div/>
       `; 
     
-      // const curso = new Curso(cursoGuardado.id, cursoGuardado.nombre, cursoGuardado.profesor);
-      // curso.estudiantes = cursoGuardado.estudiantes.map(est => new Estudiante(est.id, est.nombre, est.edad, est.nota));
-      // cursos.push(curso);
     });
   } else {
     console.log('No hay cursos en localStorage'); // Indica que no hay cursos guardados
@@ -281,13 +282,7 @@ mostrarCursosDesdeLocalStorage();  // Mostrar cursos desde LocalStorage
 
 
 
-
-
-
 function EliminarEstudiantes(idCurso, idEstudiante) {
-// Obtener los cursos guardados en el localStorage
-
-
 // Buscar el curso correspondiente
 const curso = cursosGuardados.find(c => c.id === idCurso);
 
@@ -309,10 +304,112 @@ if (curso) {
 }
 }
 
+// Funciones para eliminar cursos
+function eliminarCurso(idCurso) {
+  if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
+    const cursoActualizado = cursosGuardados.filter(c => c.id !== idCurso);
+    localStorage.setItem("CursosGuardados", JSON.stringify(cursoActualizado));
+
+    // Eliminar el curso del DOM dinámicamente
+    const cursoElemento = document.querySelector(`#curso-${idCurso}`);
+    if (cursoElemento) {
+      cursoElemento.remove(); // Elimina el elemento del curso de la página
+    }
+  }
+}
+// Funciones para EDITAR cursos
+function editarCurso(idCurso) {
+  const cursoEditado = cursosGuardados.find(c => c.id === idCurso);
+  
+  document.getElementById('id-curso').value = cursoEditado.id;
+  document.getElementById('nombre-curso').value = cursoEditado.nombre;
+  document.getElementById('profesor-curso').value = cursoEditado.profesor;
+
+  tituloFormCurso.textContent = 'Editar Curso';
+  document.getElementById('boton-curso').style.display = 'none';
+  botonGuardarCambios.style.display = 'inline-block';
+  botonCancelarCurso.style.display = 'inline-block';
+
+
+  botonGuardarCambios.onclick = function () {
+    // Obtener los valores actualizados del formulario
+    const nombreCursoActualizado = document.getElementById('nombre-curso').value;
+    const profesorCursoActualizado = document.getElementById('profesor-curso').value;
+
+     // Actualizar los datos del curso en el array
+     cursoEditado.nombre = nombreCursoActualizado;
+     cursoEditado.profesor = profesorCursoActualizado;
+
+     // Actualizar localStorage con los cursos editados
+    localStorage.setItem('CursosGuardados', JSON.stringify(cursosGuardados));
+
+
+    // Limpiar el formulario y restaurar su estado original
+    formCurso.reset();
+    tituloFormCurso.textContent = 'Agregar Nuevo Curso';
+    document.getElementById('boton-curso').style.display = 'inline-block';
+    botonGuardarCambios.style.display = 'none';
+    botonCancelarCurso.style.display = 'none';
+
+    // Actualizar la vista con los cursos editados
+    cuerpo.innerHTML = "";
+    mostrarCursosDesdeLocalStorage();
+  }
+}
 
 
 
+function editarEstudiante(idCurso, idEstudiante) {
+  
+  // Buscar el curso correspondiente
+  const curso = cursosGuardados.find(c => c.id === idCurso);
+  
+  if (curso) {
+    const estudiante = curso.estudiantes.find(est => est.id === idEstudiante);
+    if (estudiante) {
+      // Rellenar el formulario con los datos del estudiante
+      document.getElementById('id-estudiante').value = estudiante.id;
+      document.getElementById('id-curso-estudiante').value = cursoEstudianteSelect.options[cursoEstudianteSelect.selectedIndex].value;
+      document.getElementById('nombre-estudiante').value = estudiante.nombre;
+      document.getElementById('edad-estudiante').value = estudiante.edad;
+      document.getElementById('nota-estudiante').value = estudiante.nota;
+      document.getElementById('curso-estudiante').value = cursos.findIndex(c => c.id === idCurso);
 
+      // Cambiar el título y el botón del formulario
+      tituloFormEstudiante.textContent = 'Editar Estudiante';
+      document.getElementById('boton-estudiante').style.display = 'none';
+      botonCancelarEstudiante.style.display = 'inline-block';
+      botonGuardarCambiosEstudiante.style.display = 'inline-block';
+
+      botonGuardarCambiosEstudiante.onclick = function(){
+        const idCurso = parseInt(document.getElementById('id-curso-estudiante').value);
+        const idEstudiante = parseInt(document.getElementById('id-estudiante').value);
+        const nombreEstudiante = document.getElementById('nombre-estudiante').value;
+        const edadEstudiante = parseInt(document.getElementById('edad-estudiante').value);
+        const notaEstudiante = parseFloat(document.getElementById('nota-estudiante').value);
+
+        // Actualizar los datos del estudiante
+        estudiante.nombre = nombreEstudiante;
+        estudiante.edad = edadEstudiante;
+        estudiante.nota = notaEstudiante;
+
+        // Guardar la nueva lista de cursos en el localStorage
+        localStorage.setItem('CursosGuardados', JSON.stringify(cursosGuardados));
+
+        // Limpiar el formulario y restaurar su estado original
+        formEstudiante.reset();
+        tituloFormEstudiante.textContent = 'Agregar Nuevo Estudiante';
+        document.getElementById('boton-estudiante').style.display = 'inline-block'; // Mostrar el botón de agregar
+        botonGuardarCambiosEstudiante.style.display = 'none'; // Ocultar botón de guardar cambios
+        botonCancelarEstudiante.style.display = 'none'; // Ocultar botón de cancelar
+
+        // Vaciamos el cuerpo donde estaban los cursos y estudiantes viejos y volvemos a mostrar los cursos actualizados
+        cuerpo.innerHTML = "";
+        mostrarCursosDesdeLocalStorage();
+      }
+    }
+  }
+}
 
 
 
@@ -390,49 +487,6 @@ if (curso) {
 //   });
 // }
 
-// Funciones para EDITAR cursos
-// function editarCurso() {
-//   // const cursoDiv = e.target.parentElement;
-//   // const idCurso = parseInt(cursoDiv.getAttribute('data-id'));
-//   // const curso = cursos.find(c => c.id === idCurso);
-//   // if (curso) {
-//   //   // Rellenar el formulario con los datos del curso
-//   //   document.getElementById('id-curso').value = curso.id;
-//   //   document.getElementById('nombre-curso').value = curso.nombre;
-//   //   document.getElementById('profesor-curso').value = curso.profesor;
-
-//   //   // Cambiar el título y el botón del formulario
-//   //   tituloFormCurso.textContent = 'Editar Curso';
-//   //   document.getElementById('boton-curso').textContent = 'Guardar Cambios';
-//   //   botonCancelarCurso.style.display = 'inline-block';
-//   // }
-// }
-
-// // Funciones para EDITAR estudiantes
-// function editarEstudiante(e) {
-//   // const estudianteDiv = e.target.parentElement;
-//   // const idEstudiante = parseInt(estudianteDiv.getAttribute('data-id'));
-//   // const cursoDiv = e.target.closest('.curso');
-//   // const idCurso = parseInt(cursoDiv.getAttribute('data-id'));
-//   // const curso = cursos.find(c => c.id === idCurso);
-//   // if (curso) {
-//   //   const estudiante = curso.estudiantes.find(est => est.id === idEstudiante);
-//   //   if (estudiante) {
-//   //     // Rellenar el formulario con los datos del estudiante
-//   //     document.getElementById('id-estudiante').value = estudiante.id;
-//   //     document.getElementById('id-curso-estudiante').value = cursoEstudianteSelect.options[cursoEstudianteSelect.selectedIndex].value;
-//   //     document.getElementById('nombre-estudiante').value = estudiante.nombre;
-//   //     document.getElementById('edad-estudiante').value = estudiante.edad;
-//   //     document.getElementById('nota-estudiante').value = estudiante.nota;
-//   //     document.getElementById('curso-estudiante').value = cursos.findIndex(c => c.id === idCurso);
-
-//   //     // Cambiar el título y el botón del formulario
-//   //     tituloFormEstudiante.textContent = 'Editar Estudiante';
-//   //     document.getElementById('boton-estudiante').textContent = 'Guardar Cambios';
-//   //     botonCancelarEstudiante.style.display = 'inline-block';
-//   //   }
-//   // }
-// }
 
 
 
@@ -445,37 +499,6 @@ if (curso) {
 
 
 
-
-
-
-
-// // Funciones para eliminar cursos
-// function eliminarCurso(e) {
-//   if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
-//     const cursoDiv = e.target.parentElement;
-//     const idCurso = parseInt(cursoDiv.getAttribute('data-id'));
-//     cursos = cursos.filter(c => c.id !== idCurso);
-//     actualizarCursosSelect();
-//     guardarCursosEnLocalStorage();
-//     mostrarCursos();
-//   }
-// }
-
-// // Funciones para eliminar estudiantes
-// function eliminarEstudiante(e) {
-//   if (confirm('¿Estás seguro de que deseas eliminar este estudiante?')) {
-//     const estudianteDiv = e.target.parentElement;
-//     const idEstudiante = parseInt(estudianteDiv.getAttribute('data-id'));
-//     const cursoDiv = e.target.closest('.curso');
-//     const idCurso = parseInt(cursoDiv.getAttribute('data-id'));
-//     const curso = cursos.find(c => c.id === idCurso);
-//     if (curso) {
-//       curso.eliminarEstudiante(idEstudiante);
-//       guardarCursosEnLocalStorage();
-//       mostrarCursos();
-//     }
-//   }
-// }
 
 
 

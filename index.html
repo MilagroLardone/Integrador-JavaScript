@@ -23,7 +23,8 @@
       <label for="profesor-curso">Profesor a cargo:</label>
       <input type="text" id="profesor-curso">
 
-      <button type="button" id="" onclick="ValidarCurso()">Agregar Curso</button>
+      <button type="button" id="boton-curso" style="display: inline-block;" onclick="AgregarCurso()">Agregar Curso</button>
+      <button type="button" id="guardar-cambios" style="display: none;">Guardar cambios</button>
       <button type="button" id="cancelar-curso" style="display: none;">Cancelar</button>
     </form>
 
@@ -48,7 +49,8 @@
         <!-- Opciones de curso dinámicamente -->
       </select>
 
-      <button type="button" id="boton-estudiante" onclick="agregarEstudiante()">Agregar Estudiante</button>
+      <button type="button" id="boton-estudiante" onclick="agregarEstudiante()" style="display: inline-block;">Agregar Estudiante</button>
+      <button type="button" id="guardar-estudiante" style="display: none;">guardar cambios</button>
       <button type="button" id="cancelar-estudiante" style="display: none;">Cancelar</button>
     </form>
 
